@@ -167,6 +167,10 @@ def source_template():
 	return app.send_static_file('templates/index.html')
 	#return app.send_static_file(os.path.join('main.py', os.path()).replace('\\','/')) 
 
+@app.route('/favicon.ico')
+def serve_favicon():
+	return app.send_static_file('favicon.ico')
+	
 if __name__ == "__main__":
 	 # Bind to PORT if defined, otherwise default to 5000.
 	 port = int(os.environ.get('PORT', 5000))
