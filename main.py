@@ -52,15 +52,15 @@ def daily_reward(account_name):
     
     full_balance = balance_num(account_name)
     
-    steem_tags = soup.findAll('div',{'class':'UserWallet__balance row'})
-    steem_balance_str = steem_tags[2].select('div.column')[1].string
-    steem_balance = float(steem_balance_str.split(' ')[0].replace(',',''))
-    
+    rewards_div = soup.find(text='Curation rewards last week').next
+    reward_value_str = rewards_div.text[:-1]
+    reward_value = float(reward_value_str.split(' ')[0].replace(',',''))
+	
     last_price_usd, last_price_steem = get_prices()
     
-    steem_value = "{0:.2f}".format(steem_balance * last_price_steem * last_price_usd / 7)
+    value_of_reward = "{0:.2f}".format(reward_value * last_price_steem * last_price_usd / 7)
     
-    return_str = ('<p>Account: <u>' + account_name + '</u>, balance: <u>' + str(full_balance) + '</u> STEEM POWER</p><p>Last week\'s average reward: <u>' + str(steem_balance / 7) + '</u> STEEM POWER / day.</p><p>' + 'Average daily value of last week''s reward: $<u>' + steem_value + '</u></p>')
+    return_str = ('<p>Account: <u>' + account_name + '</u>, balance: <u>' + str(full_balance) + '</u> STEEM POWER</p><p>Last week\'s average reward: <u>' + str(reward_value / 7) + '</u> STEEM POWER / day.</p><p>' + 'Average daily value of last week''s reward: $<u>' + value_of_reward + '</u></p>')
     
     return return_str
     
@@ -70,15 +70,15 @@ def daily_reward_num(account_name):
     
     curation_info = requests.get('https://steemit.com/' + account_name + '/curation-rewards')
     soup = BeautifulSoup(curation_info.text,'html.parser')
-    steem_tags = soup.findAll('div',{'class':'UserWallet__balance row'})
-    steem_balance_str = steem_tags[2].select('div.column')[1].string
-    steem_balance = float(steem_balance_str.split(' ')[0].replace(',',''))
+    rewards_div = soup.find(text='Curation rewards last week').next
+    reward_value_str = rewards_div.text[:-1]
+    reward_value = float(reward_value_str.split(' ')[0].replace(',',''))
     
     last_price_usd, last_price_steem = get_prices()
     
-    steem_value = "{0:.2f}".format(steem_balance * last_price_steem * last_price_usd / 7)
+    steem_value = reward_value * last_price_steem * last_price_usd / 7
     
-    return str(steem_balance * last_price_steem * last_price_usd / 7)
+    return steem_value
     
     
 @app.route("/approximate_reward/<path:identifier>")
